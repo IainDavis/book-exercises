@@ -2,7 +2,7 @@
 This is a place for me to collect and document hands-on exercises I've done, or significantly analyzed during self-guided study
 
 ## Exercises from these books:
-* **[Designing Distributed Systems (2e)][designing-distributed-systems] by Brendan Burns (O'Reilly)** 
+* **[Designing Distributed Systems (2e)][designing-distributed-systems] by [Brendan Burns][brendan-burns] (O'Reilly)** 
 
 [designing-distributed-systems]:
     https://learning.oreilly.com/library/view/designing-distributed-systems/9781098156343/ 
