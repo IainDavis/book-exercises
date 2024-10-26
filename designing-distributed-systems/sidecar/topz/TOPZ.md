@@ -70,3 +70,32 @@ nginx: [emerg] host not found in upstream "cadvisor" in /etc/nginx/conf.d/defaul
 
 solution (from Nova): create and use a Docker network
 
+```mermaid
+flowchart TD
+    %% Define styles for each type of node
+    classDef request fill:#66ccff,stroke:#004080,stroke-width:2px,color:#000,font-weight:bold;
+    classDef processing fill:#ffcc66,stroke:#804000,stroke-width:2px,color:#000,font-weight:bold;
+    classDef transform fill:#66ff99,stroke:#006633,stroke-width:2px,color:#000,font-weight:bold;
+
+    A[Client: Request to /containers]:::request
+    B[Nginx: Forward to cAdvisor]:::processing
+    C[cAdvisor: Generate HTML Response]:::processing
+    D[Nginx: Apply sub_filter Rules]:::transform
+    E[Nginx: Return Transformed Response]:::processing
+    F[Client: Receive Transformed Page]:::request
+    G[Client: Request to Docker Containers]:::request
+
+    A -->|1| B
+    B -->|2| C
+    C -->|3| D
+    D -->|4| E
+    E -->|5| F
+    F -->|6| G
+    G -->|7| B
+
+    classDef request fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef processing fill:#ff9,stroke:#333,stroke-width:2px;
+    classDef transform fill:#9ff,stroke:#333,stroke-width:2px;
+
+```
+
