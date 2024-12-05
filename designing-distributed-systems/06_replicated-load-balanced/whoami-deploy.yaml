@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whoami-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: whoami-server
+  template:
+    metadata:
+      labels:
+        app: whoami-server
+    spec:
+      containers:
+      - name: server
+        image: traefik/whoami
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 2
+          periodSeconds: 5
+        

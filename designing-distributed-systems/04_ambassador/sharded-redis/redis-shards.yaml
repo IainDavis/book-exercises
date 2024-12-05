@@ -1,0 +1,32 @@
+# This configuration sets up a simple Redis StatefulSet with three
+# replicas, each with its own identity and persistent storage. In
+# production, you'd typically need to set up persistent volumes for
+# data storage and configure a headless service to enable discovery of
+# each replica. Additionally, using Redis in a true clustered mode may
+# require a configuration enabling inter-node communication and
+# sharding logic.
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  # name of the StatefulSet
+  name: sharded-redis
+spec:
+  serviceName: "redis"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: redis
+          image: redis
+          ports:
+          # expose redis pods internally on port 6379
+          - containerPort: 6379
+            name: redis
