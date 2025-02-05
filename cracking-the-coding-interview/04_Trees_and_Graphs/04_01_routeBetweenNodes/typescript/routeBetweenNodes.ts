@@ -60,217 +60,63 @@ function parseMermaidToAdjacencyList(mermaid: string): Record<string, string[]> 
     return adjacencyList;
 }
 
-type AdjacencyList = Record<string, string[]>;
+type AdjacencyList<T> = Map<T, [T, number][]>
 
-function adjacencyListToMermaid(
-    adjList: Record<string, string[]>,
-    direction: string = "LR",
-    groupLimit: number = 3
-): string {
-    let mermaid = `\`\`\`mermaid\ngraph ${direction}\n`;
+function adjacencyListToMermaid<T>(adjList: AdjacencyList<T>, direction: "TD" | "LR" | "RL" | "BT" = "TD"): string {
+    let mermaidLines: string[] = [`\`\`\`mermaid`, `graph ${direction}`];
 
-    const processedEdges = new Set<string>();
+    // Extract all unique nodes
+    const nodes = new Set<T>();
+    let isWeighted = false;
+    for (const [node, edges] of adjList) {
+        nodes.add(node);
+        for (const [neighbor, weight] of edges) {
+            nodes.add(neighbor);
+            if (weight !== 0) isWeighted = true;
+        }
+    }
 
-    // Declare nodes first
-    for (const node in adjList) {
-        mermaid += `    ${node}(( ${node} ))\n`;
+    // Define nodes at the top
+    for (const node of nodes) {
+        mermaidLines.push(`    ${node}(( ${node} ))`);
     }
 
     // Process edges
-    for (const node in adjList) {
-        const neighbors = adjList[node];
+    const processedEdges = new Set<string>();
+    for (const [node, edges] of adjList) {
+        for (const [neighbor, weight] of edges) {
+            let arrow: string;
+            const edgeKey = `${node}-${neighbor}`;
+            const reverseEdgeKey = `${neighbor}-${node}`;
 
-        const directedEdges: string[] = [];
-        const undirectedEdges: string[] = [];
-
-        for (const neighbor of neighbors) {
-            const edgeKey = [node, neighbor].sort().join("<-->"); // Standardized key
-
-            if (adjList[neighbor]?.includes(node)) {
-                // **Bidirectional → Use `<-->` (only if not processed)**
-                if (!processedEdges.has(edgeKey)) {
-                    undirectedEdges.push(neighbor);
+            if (adjList.get(neighbor)?.some(([n, w]) => n === node && w === weight)) {
+                if (!processedEdges.has(reverseEdgeKey)) {
+                    arrow = `<-->`;
                     processedEdges.add(edgeKey);
+                    processedEdges.add(reverseEdgeKey);
+                } else {
+                    continue; // Avoid duplicate bidirectional edges
                 }
             } else {
-                // **One-way → Use `-->`**
-                directedEdges.push(neighbor);
+                arrow = `-->`;
+                processedEdges.add(edgeKey);
             }
-        }
 
-        // Group and output directed edges
-        for (let i = 0; i < directedEdges.length; i += groupLimit) {
-            const batch = directedEdges.slice(i, i + groupLimit).join(" & ");
-            mermaid += `    ${node} --> ${batch}\n`;
-        }
-
-        // Group and output undirected edges
-        for (let i = 0; i < undirectedEdges.length; i += groupLimit) {
-            const batch = undirectedEdges.slice(i, i + groupLimit).join(" & ");
-            mermaid += `    ${node} <--> ${batch}\n`;
+            const weightLabel = isWeighted ? `|${weight ?? 0}| ` : "";
+            mermaidLines.push(`    ${node} ${arrow} ${weightLabel}${neighbor}`);
         }
     }
 
-    mermaid += `\`\`\``;
-    return mermaid;
+    mermaidLines.push(`\`\`\``);
+    return mermaidLines.join("\n");
 }
 
-
 // Example usage
-const mermaidDiagram1 = `
-graph LR
-    A((A))
-    B((B))
-    C((C))
-    D((D))
-
-    A --> B & C
-    C --> D
-    D --> B & A
-`;
-
-// Example usage
-
-const mermaidDiagram2 = `
-graph LR
-    A((A))
-    B((B))
-    C((C))
-    D((D))
-    E((E))
-
-    A --> B & C
-    C --> D
-    D --> B & A
-    B --- E
-    D <--> E
-`;
-
-
-console.log("diagram1", parseMermaidToAdjacencyList(mermaidDiagram1));
-console.log("diagram2", parseMermaidToAdjacencyList(mermaidDiagram2));
-
-const graph: AdjacencyList = {
-    A: ["B", "C"],
-    B: ["D"],
-    C: ["D"],
-    D: ["A"]
-};
-
-console.log(adjacencyListToMermaid(graph, "LR"));
-
-const directedGraph: Record<string, string[]> = {
-    A: ["B"],
-    B: ["C", "D"],
-    C: [],
-    D: []
-  };
-
-const undirectedGraph: Record<string, string[]> = {
-A: ["B", "C"],
-B: ["A", "D"],
-C: ["A", "D"],
-D: ["B", "C"]
-};
-
-const disconnectedGraph: Record<string, string[]> = {
-    A: ["B"],
-    B: ["A"],
-    C: ["D"],
-    D: ["C"]
-};
-
-const cyclicDirectedGraph: Record<string, string[]> = {
-    A: ["B"],
-    B: ["C"],
-    C: ["D"],
-    D: ["B"] // Cycle from D → B → C → D
-};
-
-const largeGraph: Record<string, string[]> = {
-    A: ["B", "C", "D"],
-    B: ["E", "F"],
-    C: ["G", "H"],
-    D: ["I"],
-    E: ["J"],
-    F: ["J", "K"],
-    G: ["L"],
-    H: ["M"],
-    I: ["N"],
-    J: ["O"],
-    K: [],
-    L: ["P"],
-    M: [],
-    N: ["P"],
-    O: [],
-    P: []
-  };
-
-const bfsGraph = {
-    A: ["B", "C"],
-    B: ["A", "D", "E"],
-    C: ["A", "F"],
-    D: ["B"],
-    E: ["B", "F"],
-    F: ["C", "E", "G"],
-    G: ["F"]
-};
-
-const dfsCycleGraph = {
-    A: ["B", "C"],
-    B: ["A", "D", "E"],
-    C: ["A", "F"],
-    D: ["B"],
-    E: ["B", "F"],
-    F: ["C", "E", "G"],
-    G: ["F", "D"] // Cycle between G → D → B → E → F → G
-};
-
-const topoGraph = {
-    A: ["B", "C"],
-    B: ["D"],
-    C: ["D"],
-    D: ["E"],
-    E: []
-};
-
-const dijkstraGraph = {
-    A: { B: 4, C: 1 },
-    B: { A: 4, D: 5, E: 8 },
-    C: { A: 1, F: 6 },
-    D: { B: 5, G: 3 },
-    E: { B: 8, F: 2 },
-    F: { C: 6, E: 2, G: 7 },
-    G: { D: 3, F: 7 }
-};
-
-const bellmanFordGraph = {
-    A: { B: 6, C: 7 },
-    B: { D: 5, E: -4, C: 8 },
-    C: { E: 9, F: 3 },
-    D: { B: -2 },
-    E: { D: 7, F: -2 },
-    F: {}
-};
-
-const sccGraph = {
-    A: ["B"],
-    B: ["C"],
-    C: ["A", "D"],
-    D: ["E"],
-    E: ["F"],
-    F: ["D"]
-};
-
-console.log("directed graph:\n", adjacencyListToMermaid(directedGraph));
-console.log("undirected graph:\n", adjacencyListToMermaid(undirectedGraph));
-console.log("disconnected graph:\n", adjacencyListToMermaid(disconnectedGraph));
-console.log("cyclic directed graph:\n", adjacencyListToMermaid(cyclicDirectedGraph));
-console.log("large graph:\n", adjacencyListToMermaid(largeGraph));
-console.log("breadth-first search graph:\n", adjacencyListToMermaid(bfsGraph));
-console.log("depth-first cycle search graph:\n", adjacencyListToMermaid(dfsCycleGraph));
-console.log("topological sort test graph:\n", adjacencyListToMermaid(topoGraph));
-console.log("strongly-connected-components test graph:\n", adjacencyListToMermaid(sccGraph));
-
-// console.log("dijkstra's algorithm test graph:\n", adjacencyListToMermaid(dijkstraGraph));
-// console.log("bellman-ford algorithm test graph: \n", adjacencyListToMermaid(dijkstraGraph));
+const weightedGraph: AdjacencyList<string> = new Map([
+    ["A", [["B", 4], ["C", undefined]]],
+    ["B", [["D", 5], ["E", 3]]],
+    ["C", [["F", undefined]]],
+    ["E", [["F", 7]]],
+    ["F", [["G", 6]]],
+]);
+console.log(adjacencyListToMermaid(weightedGraph, "LR"));
