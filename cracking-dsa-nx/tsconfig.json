@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./chapter01/01_01/v1"
+    },
+    {
+      "path": "./chapter01"
+    },
+    {
+      "path": "./chapter01/q01_01-v1"
+    }
+  ]
+}

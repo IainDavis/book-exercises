@@ -1,0 +1,5 @@
+rootProject.name = 'cracking-dsa-nx'
+include 'chapter01:q01_01-v1:java'
+// include 'chatper01:q01_02-v2:java'
+
+

@@ -1,0 +1,26 @@
+{
+  "name": "q01-01-v1",
+  "targets": {
+    "test:py": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pytest -vs py",
+        "cwd": "chapter01/q01_01-v1"
+      }
+    },
+    "test:java": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./gradlew --rerun-tasks --no-build-cache :chapter01:q01_01-v1:java:test",
+        "cwd": "."
+      }
+    },
+    "test:go": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "gotestsum --format testname -- -v  ",
+        "cwd": "chapter01/q01_01-v1/go"
+      }
+    }
+  }
+}

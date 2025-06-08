@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.iaindavis.dsa.IsUniqueTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2025-06-07T01:27:52.029Z" hostname="Iains-MacBook-Pro.local" time="0.013">
+  <properties/>
+  <testcase name="Using streams to array and set comparison: input='abc' → expected=true" classname="dev.iaindavis.dsa.IsUniqueTest" time="0.004"/>
+  <testcase name="Using streams to array and set comparison: input='aabc' → expected=false" classname="dev.iaindavis.dsa.IsUniqueTest" time="0.001"/>
+  <testcase name="Using streams to array and set comparison: input='&#x1f649;&#x1f4a9;' → expected=true" classname="dev.iaindavis.dsa.IsUniqueTest" time="0.001"/>
+  <testcase name="Using streams to array and set comparison: input='&#x1f649;&#x1f649;' → expected=false" classname="dev.iaindavis.dsa.IsUniqueTest" time="0.0"/>
+  <testcase name="Brute force implementation with nested loops: input='abc' → expected=true" classname="dev.iaindavis.dsa.IsUniqueTest" time="0.0"/>
+  <testcase name="Brute force implementation with nested loops: input='aabc' → expected=false" classname="dev.iaindavis.dsa.IsUniqueTest" time="0.0"/>
+  <testcase name="Brute force implementation with nested loops: input='&#x1f649;&#x1f4a9;' → expected=true" classname="dev.iaindavis.dsa.IsUniqueTest" time="0.001"/>
+  <testcase name="Brute force implementation with nested loops: input='&#x1f649;&#x1f649;' → expected=false" classname="dev.iaindavis.dsa.IsUniqueTest" time="0.0"/>
+  <testcase name="Using streams with distinct and count: input='abc' → expected=true" classname="dev.iaindavis.dsa.IsUniqueTest" time="0.001"/>
+  <testcase name="Using streams with distinct and count: input='aabc' → expected=false" classname="dev.iaindavis.dsa.IsUniqueTest" time="0.0"/>
+  <testcase name="Using streams with distinct and count: input='&#x1f649;&#x1f4a9;' → expected=true" classname="dev.iaindavis.dsa.IsUniqueTest" time="0.0"/>
+  <testcase name="Using streams with distinct and count: input='&#x1f649;&#x1f649;' → expected=false" classname="dev.iaindavis.dsa.IsUniqueTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

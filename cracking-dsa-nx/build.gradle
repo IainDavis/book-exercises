@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+}
+
+allprojects {
+    group = 'dev.iaindavis'
+    version = '0.1.0'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+    }
+
+    testing {
+        suites {
+            test {
+                useJUnitJupiter()
+            }
+        }
+    }
+
+    tasks.withType(Test).configureEach {
+        testLogging {
+            events = ["passed", "skipped", "failed"]
+            exceptionFormat = "full"
+            showStandardStreams = true
+        }
+    }
+}
